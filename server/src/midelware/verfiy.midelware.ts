@@ -9,14 +9,17 @@ interface userData{
   walletId:string
 }
 
-const verfiyUser=AsyncHandler(async(req:Request,res:Response):Promise<boolean>=>{
+
+
+const verfiyUser=AsyncHandler(async(req:Request,res:Response,next:NextFunction)=>{
   //find's if user exist on block-chain or not;
   const user:userData=req.body;
   if(!user.walletId) throw new ApiError(400,"Invalid user");
   const client=await AptosConnect();
   const verfiy=await client?.account.getAccountInfo({accountAddress:user?.walletId});
-  if(!verfiy) return false;
-  return true;
+  if(!verfiy)req.body=false;
+  req.body=verfiy;
+  next();
 })
 
 export {

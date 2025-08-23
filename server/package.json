@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ./dist/index.js"
   },
   "repository": {
     "type": "git",
@@ -13,19 +15,27 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/CODECZERO/ONOD/issues"
   },
   "homepage": "https://github.com/CODECZERO/ONOD#readme",
   "dependencies": {
     "@aptos-labs/ts-sdk": "^4.0.0",
+    "aptos": "^1.3.12",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
     "express": "^5.1.0",
-    "mongoose": "^8.18.0"
+    "mongoose": "^8.18.0",
+    "nanoid": "^5.1.5",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "cros": "^1.1.0",
+    "nodemon": "^3.1.10",
     "typescript": "^5.9.2"
   }
 }
