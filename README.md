@@ -74,32 +74,38 @@ cd one-nation-one-document
 
 
 
-2. **Install backend dependencies**
+2. Install backend dependencies
 cd backend 
 npm install
 
 
-3. **Install frontend dependencies**
+3. Install frontend dependencies
 cd ./frontend
 pip install -r requirements.txt
 
 
-4. **Run backend**
-```bash
+4. Run backend
 node server.js
 
 
-5. **Run frontend**
-```cmd
+5. Run frontend
 streamlit run app.py
 
 
-```bash
 6. Open http://localhost:8501 to view the application.
 
 ---
 
-## **Usage**
+ Project Reference:
+
+Blockchain Reference (Aptos): https://aptoslabs.com
+
+Frontend Repo: ./frontend
+
+Backend Repo: ./backend
+
+
+Usage:
 - Register a citizen profile with personal, government, education, and employment info.
 - Upload supporting documents (Aadhaar, PAN, certificates, etc.).
 - Generate a deterministic SHA256 proof hash and optionally anchor on Aptos.
@@ -108,13 +114,13 @@ streamlit run app.py
 - QR codes enable quick proof verification offline or online.
 
 
-## **Hackathon Highlights**
+Hackathon Highlights:
 - Prototype MVP ready in < 24 hours
 - Secure, blockchain-backed digital identity demo.
 - Innovative QR + proof hash verification
 - Easy integration for organizations and admins
 - Highly scalable architecture using NodeJS + MongoDB + Aptos
 
-**License**
+License
 MIT License 
 
