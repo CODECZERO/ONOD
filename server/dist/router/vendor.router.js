@@ -1,6 +1,8 @@
 import { Router } from "express";
-import { saveData, issueData } from "../controler/vendore.controler.js";
+import { saveData, login, issueData, readTra } from "../controler/vendore.controler.js";
 const router = Router();
-router.route("/VendeorReg").post(saveData);
+router.route("/vendeorReg").post(saveData);
+router.route("/VendeorLogin").post(login);
 router.route("/issue").post(issueData);
+router.route("/readData").get(readTra);
 export default router;
