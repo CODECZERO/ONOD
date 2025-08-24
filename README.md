@@ -73,8 +73,8 @@ git clone https://github.com/CODECZERO/one-nation-one-document.git
 cd one-nation-one-document
 
 
-node server.js
-
+2. Downloads a files
+node.js clear-- 
 
 
 3. Install frontend dependencies
