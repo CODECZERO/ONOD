@@ -15,7 +15,7 @@
 Built as a **prototype/MVP** for hackathons, ONOD demonstrates how **blockchain technology (Aptos)** can anchor proofs securely, while the user-friendly frontend allows citizens and organizations to interact with digital records easily.
 
 **Key Goals:**
-- Simplify citizen identity management in India 🇮🇳  
+- Simplify citizen identity management in India
 - Provide tamper-proof proof generation via SHA256 + blockchain anchoring  
 - Allow verified organizations to add trusted updates  
 - Enable easy verification, QR-based sharing, and export options  
