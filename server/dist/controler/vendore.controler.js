@@ -10,10 +10,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import AsyncHandler from "../util/asycHanlder.js";
 import { ApiError } from "../util/apiError.js";
 import { ApiResponse } from "../util/apiResponse.js";
-import { dataSave, checkUser } from "../db/query.nosql.js";
+import { dataSave, checkUser, getWalletAndPrivateKey, storeTransactionId } from "../db/query.nosql.js";
 import bcrypt from "bcrypt";
 import { Account, } from "@aptos-labs/ts-sdk";
-import { AptosConnect, submitTnx } from "../db/aptos.config.js";
+import { AptosConnect, readTransaction, submitTnx } from "../db/aptos.config.js";
 const client = AptosConnect();
 const createWalletId = () => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield Account.generate();
@@ -26,6 +26,10 @@ const createWalletId = () => __awaiter(void 0, void 0, void 0, function* () {
 });
 const saveData = AsyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.body;
+    const existingUser = yield checkUser(user.email); // `checkUser` should use `Vendor.findOne()`
+    if (existingUser) {
+        throw new ApiError(400, "User with this email already exists");
+    }
     const pass = yield bcrypt.hash(user.password, 10);
     const walletData = yield createWalletId();
     const data = yield dataSave(Object.assign(Object.assign({}, user), { password: pass, walletId: walletData.accountAddress, privateKey: walletData.privateKey }));
@@ -56,22 +60,44 @@ const BlockData = (data) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 const login = AsyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, pass } = req.body;
-    if (!email || !pass)
-        throw new ApiError(400, "Not data is provied");
-    const check = yield checkUser(email);
-    if (!check)
-        throw new ApiError(404, check);
-    const compareCode = yield bcrypt.compare(pass, check === null || check === void 0 ? void 0 : check.password);
-    if (!compareCode)
-        throw new ApiError(401, "INVALID PASSWORD");
-    return res.status(200).json(new ApiResponse(200, check, "user found"));
+    const { email, password } = req.body; // Use 'password' to match the frontend payload
+    // Step 1: Check for missing credentials from the request body
+    if (!email || !password) {
+        throw new ApiError(400, "Email and password are required.");
+    }
+    // Step 2: Find the user in the database
+    const user = yield checkUser(email);
+    // Step 3: Check if the user was found
+    if (!user) {
+        throw new ApiError(404, "Invalid email or password.");
+    }
+    // Step 4: Compare the provided password with the stored hashed password
+    const passwordMatch = yield bcrypt.compare(password, user === null || user === void 0 ? void 0 : user.password);
+    // Step 5: Check if the passwords match
+    if (!passwordMatch) {
+        throw new ApiError(401, "Invalid email or password.");
+    }
+    // Step 6: If all checks pass, return a successful response
+    return res.status(200).json(new ApiResponse(200, user, "Login successful."));
 }));
 const issueData = AsyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const testData = req.body;
     if (!testData)
         throw new ApiError(400, "invalid data");
-    const saveDataonChain = yield BlockData(testData);
-    return res.status(200).json(new ApiResponse(200, saveDataonChain));
+    const findDataIssuer = yield getWalletAndPrivateKey(testData.issuer);
+    const findDataReciver = yield getWalletAndPrivateKey(testData.receiver);
+    const updateData = Object.assign(Object.assign({}, testData), { issuer: findDataIssuer.walletId, privateKey: findDataIssuer.privateKey, receiver: findDataReciver.walletId });
+    if (!updateData)
+        throw new ApiError(404, "Invaild data");
+    const saveDataonChain = yield BlockData(updateData);
+    const saveData = yield storeTransactionId(updateData.issuer, saveDataonChain);
+    return res.status(200).json(new ApiResponse(200, saveData));
 }));
-export { saveData, login, createWalletId, issueData };
+const readTra = AsyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { transId } = req.body;
+    if (!transId)
+        throw new ApiError(400, "Invalid id");
+    const read = yield readTransaction(transId);
+    return res.status(200).json(new ApiResponse(200, read));
+}));
+export { saveData, login, createWalletId, issueData, readTra, BlockData };

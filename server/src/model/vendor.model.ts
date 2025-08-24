@@ -13,13 +13,16 @@ const venSchema = new mongoose.Schema({
   transId: [
     {
       type: String,
-      index: true,
-    },
+    }
   ],
   
   password:{
     type:String,
     require:true,
+  },
+  privateKey:{
+    type:String,
+    require:true
   }
   ,
   orgName: {
