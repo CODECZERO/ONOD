@@ -24,13 +24,12 @@ Built as a **prototype/MVP** for hackathons, ONOD demonstrates how **blockchain 
 
 ## Features
 
-- ✅ **Citizen Registration:** Personal info, government IDs, education, employment, and health  
-- ✅ **Secure Document Uploads:** Aadhaar, PAN, certificates, and other proofs  
-- ✅ **Proof Hash Generation:** Deterministic SHA256 hash for each submission  
-- ✅ **QR Code Generation:** Quick proof sharing and verification  
-- ✅ **Organization Portal:** Verified updates from hospitals, schools, banks, etc.  
-- ✅ **Admin Dashboard:** Inspect, export, and manage submissions  
-- ✅ **Blockchain Prototype:** Proof hashes can be anchored on Aptos for immutability  
+-  **Citizen Registration:** Personal info, government IDs, education, employment, and health  
+-  **Secure Document Uploads:** Aadhaar, PAN, certificates, and other proofs    
+-  **QR Code Generation:** Quick proof sharing and verification  
+-  **Organization Portal:** Verified updates from hospitals, schools, banks, etc.  
+-  **Admin Dashboard:** Inspect, export, and manage submissions  
+-  **Blockchain Prototype:** Proof hashes can be anchored on Aptos for immutability  
 
 ---
 
@@ -38,18 +37,18 @@ Built as a **prototype/MVP** for hackathons, ONOD demonstrates how **blockchain 
 
 | Layer           | Technology                                  |
 |-----------------|--------------------------------------------|
-| Frontend        | Streamlit + CSS                             |
-| Backend         | NodeJS + MOVE                               |
+| Frontend        | Streamlit + HTML5 + CSS3                           |
+| Backend         | NodeJS + MOVE Lang                              |
 | Database        | MongoDB                                     |
 | Blockchain      | Aptos (Proof anchoring)                     |
-| Security        | SHA256 deterministic hash, QR code proofs   |
+| Security        | deterministic hash, for the Secure System.   |
 
 ---
 
 ## Screenshots / Demo
 
 ### Registration Page
-![Registration Page](./screenshots/registration.png)
+
 
 ### Citizen Dashboard
 ![Dashboard](./screenshots/dashboard.png)
@@ -57,7 +56,6 @@ Built as a **prototype/MVP** for hackathons, ONOD demonstrates how **blockchain 
 ### Admin / Export View
 ![Admin Dashboard](./screenshots/admin.png)
 
-> Replace with actual screenshots or GIFs of your app.
 
 ---
 
@@ -65,18 +63,28 @@ Built as a **prototype/MVP** for hackathons, ONOD demonstrates how **blockchain 
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/your-username/one-nation-one-document.git
+git clone https://github.com/CODECZERO/one-nation-one-document.git
 cd one-nation-one-document
+
 2. **Install backend dependencies**
+```bash
 cd backend
 npm install
+
 3. **Install frontend dependencies**
+```bash
 cd ../frontend
 pip install -r requirements.txt
+
 4. **Run backend**
+```bash
 node server.js
+
 5. **Run frontend**
+```cmd
 streamlit run app.py
+
+```bash
 6. Open http://localhost:8501 to view the application.
 
 ---
@@ -89,24 +97,18 @@ streamlit run app.py
 - Organizations can add verified updates.
 - QR codes enable quick proof verification offline or online.
 
-**Team ONOD – Hackathon Participants**
-| Name           | Role                   | Contact                                                       |
-| -------------- | ---------------------- | ------------------------------------------------------------- |
-| Harish Jagdale | Full-stack Developer   | [harish.email@example.com](mailto:harish.email@example.com)   |
-| Member 2       | Blockchain Developer   | [member2.email@example.com](mailto:member2.email@example.com) |
-| Member 3       | Frontend & UX Designer | [member3.email@example.com](mailto:member3.email@example.com) |
 
-Hackathon Highlights
+**Hackathon Highlights**
 - Prototype MVP ready in < 24 hours
-- Secure, blockchain-backed digital identity demo
+- Secure, blockchain-backed digital identity demo.
 - Innovative QR + proof hash verification
 - Easy integration for organizations and admins
 - Highly scalable architecture using NodeJS + MongoDB + Aptos
 
-License
-MIT License © 2025 Harish Jagdale
+**License**
+MIT License 
 
-Acknowledgements
+**Acknowledgements**
 - Inspired by government digital identity initiatives
 - Built with Streamlit
 , Node.js
