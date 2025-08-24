@@ -73,10 +73,8 @@ git clone https://github.com/CODECZERO/one-nation-one-document.git
 cd one-nation-one-document
 
 
+node server.js
 
-2. Install backend dependencies
-cd backend 
-npm install
 
 
 3. Install frontend dependencies
