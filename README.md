@@ -72,23 +72,29 @@ Built as a **prototype/MVP** for hackathons, ONOD demonstrates how **blockchain 
 git clone https://github.com/CODECZERO/one-nation-one-document.git
 cd one-nation-one-document
 
+
+
 2. **Install backend dependencies**
 ```bash
 cd backend
 npm install
+
 
 3. **Install frontend dependencies**
 ```bash
 cd ../frontend
 pip install -r requirements.txt
 
+
 4. **Run backend**
 ```bash
 node server.js
 
+
 5. **Run frontend**
 ```cmd
 streamlit run app.py
+
 
 ```bash
 6. Open http://localhost:8501 to view the application.
