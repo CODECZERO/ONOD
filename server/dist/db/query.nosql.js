@@ -30,7 +30,6 @@ const dataSave = (data) => __awaiter(void 0, void 0, void 0, function* () {
 const checkUser = (email) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const findUser = yield Vendeor.findOne({ email });
-        console.log(findUser);
         if (!findUser)
             return null;
         return findUser;

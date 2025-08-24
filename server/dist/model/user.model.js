@@ -10,6 +10,11 @@ const birthRecordSchema = new mongoose.Schema({
         unique: true,
         default: () => nanoid(),
     },
+    password: {
+        type: String,
+        require: true,
+        unique: true,
+    },
     walletId: {
         type: String,
         required: true,

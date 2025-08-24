@@ -23,7 +23,6 @@ const dataSave=async(data:IVendor)=>{
 const checkUser=async(email:string)=>{
     try {
         const findUser = await Vendeor.findOne({ email });
-        console.log(findUser)
         if(!findUser) return null;
         return findUser;
     } catch (error) {
