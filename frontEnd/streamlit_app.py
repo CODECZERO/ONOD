@@ -5,6 +5,45 @@ from typing import Any, Dict, Optional, Tuple
 import requests
 import streamlit as st
 
+# Simple theming tweaks
+st.markdown(
+	"""
+	<style>
+		.small-muted { color: #777; font-size: 0.9rem; }
+		.header-pill {
+			padding: 0.35rem 0.75rem; border-radius: 999px; background: #eef6ff; color: #1e5fb3; display: inline-block;
+		}
+	</style>
+	""",
+	unsafe_allow_html=True,
+)
+
+# Session helpers
+
+def init_session() -> None:
+	if "authenticated" not in st.session_state:
+		st.session_state.authenticated = False
+	if "auth_role" not in st.session_state:
+		st.session_state.auth_role = None  # 'vendor' or 'user'
+	if "auth_email" not in st.session_state:
+		st.session_state.auth_email = ""
+	if "auth_profile" not in st.session_state:
+		st.session_state.auth_profile = None
+
+
+def set_auth(role: str, email: str, profile: Any) -> None:
+	st.session_state.authenticated = True
+	st.session_state.auth_role = role
+	st.session_state.auth_email = email
+	st.session_state.auth_profile = profile
+
+
+def sign_out() -> None:
+	st.session_state.authenticated = False
+	st.session_state.auth_role = None
+	st.session_state.auth_email = ""
+	st.session_state.auth_profile = None
+
 
 def get_base_url() -> str:
 	if "base_url" not in st.session_state:
@@ -87,6 +126,14 @@ def vendor_registration_ui() -> None:
 		}
 		ok, status, data = call_api("POST", "/api/v1/vendore/vendeorReg", json_body=payload)
 		show_response(ok, status, data)
+		if ok and status == 200:
+			profile = data.get("data") if isinstance(data, dict) else None
+			set_auth("vendor", email, profile)
+			st.success("Registered and logged in as vendor")
+			try:
+				st.rerun()
+			except Exception:
+				pass
 
 
 def vendor_login_ui() -> None:
@@ -99,6 +146,14 @@ def vendor_login_ui() -> None:
 		payload = {"email": email, "password": password}
 		ok, status, data = call_api("POST", "/api/v1/vendore/VendeorLogin", json_body=payload)
 		show_response(ok, status, data)
+		if ok and status == 200:
+			profile = data.get("data") if isinstance(data, dict) else None
+			set_auth("vendor", email, profile)
+			st.success("Logged in as vendor")
+			try:
+				st.rerun()
+			except Exception:
+				pass
 
 
 def issue_document_ui() -> None:
@@ -211,10 +266,19 @@ def user_login_ui() -> None:
 		payload = {"email": email, "password": password}
 		ok, status, data = call_api("POST", "/api/v1/user/loginUser", json_body=payload)
 		show_response(ok, status, data)
+		if ok and status == 200:
+			profile = data.get("data") if isinstance(data, dict) else None
+			set_auth("user", email, profile)
+			st.success("Logged in as user")
+			try:
+				st.rerun()
+			except Exception:
+				pass
 
 
 def main() -> None:
 	st.set_page_config(page_title="Aptos CivicChain Frontend", page_icon="🧾", layout="wide")
+	init_session()
 	st.title("CivicChain API Frontend")
 	st.write("Interact with the Express backend APIs from a Streamlit UI.")
 
@@ -224,28 +288,47 @@ def main() -> None:
 		if base_url:
 			set_base_url(base_url)
 		st.caption("Default is http://localhost:4008. Change if backend runs elsewhere.")
+		st.divider()
+		if st.session_state.authenticated:
+			st.markdown(f"**Signed in:** {st.session_state.auth_role} · {st.session_state.auth_email}")
+			if st.button("Sign out"):
+				sign_out()
+				st.success("Signed out")
+				try:
+					st.rerun()
+				except Exception:
+					pass
 
-		side = st.radio("Section", [
-			"Vendor Registration",
-			"Vendor Login",
-			"Issue Document",
-			"Read Transaction",
-			"Create User",
-			"User Login",
-		])
-
-	if side == "Vendor Registration":
-		vendor_registration_ui()
-	elif side == "Vendor Login":
-		vendor_login_ui()
-	elif side == "Issue Document":
-		issue_document_ui()
-	elif side == "Read Transaction":
-		read_transaction_ui()
-	elif side == "Create User":
-		user_create_ui()
-	elif side == "User Login":
-		user_login_ui()
+	if not st.session_state.authenticated:
+		st.markdown('<span class="header-pill">Authentication Required</span>', unsafe_allow_html=True)
+		st.write("Please login or register to continue.")
+		role = st.radio("I am a", ["Vendor", "User"], horizontal=True)
+		action = st.radio("Action", ["Login", "Register"], horizontal=True)
+		if role == "Vendor":
+			if action == "Login":
+				vendor_login_ui()
+			else:
+				vendor_registration_ui()
+		else:
+			if action == "Login":
+				user_login_ui()
+			else:
+				user_create_ui()
+	else:
+		st.markdown('<span class="header-pill">Authenticated</span>', unsafe_allow_html=True)
+		st.write(f"Welcome, {st.session_state.auth_email} ({st.session_state.auth_role}).")
+		if st.session_state.auth_role == "vendor":
+			vendor_tabs = st.tabs(["Issue Document", "Read Transaction", "Create User"])
+			with vendor_tabs[0]:
+				issue_document_ui()
+			with vendor_tabs[1]:
+				read_transaction_ui()
+			with vendor_tabs[2]:
+				user_create_ui()
+		else:
+			user_tabs = st.tabs(["Read Transaction"]) 
+			with user_tabs[0]:
+				read_transaction_ui()
 
 	st.divider()
 	st.caption("Note: Some backend routes appear to have inconsistencies (e.g., GET reading request body, missing leading '/' in user mount). This UI attempts sensible fallbacks, but backend fixes may be required.")
