@@ -134,9 +134,9 @@ const issueData = AsyncHandler(async (req: Request, res: Response) => {
   const findDataReciver= await getWalletAndPrivateKey(testData.receiver);
   const updateData:BlockDataTS={
     ...testData,
-    issuer:findDataIssuer.walletId as string,
-    privateKey:findDataIssuer.privateKey as string,
-    receiver:findDataReciver.walletId as string
+    issuer:findDataIssuer?.walletId as string,
+    privateKey:findDataIssuer?.privateKey as string,
+    receiver:findDataReciver?.walletId as string
   }
   if(!updateData) throw new ApiError(404,"Invaild data");
   const saveDataonChain = await BlockData(updateData);

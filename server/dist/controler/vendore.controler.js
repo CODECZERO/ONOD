@@ -86,7 +86,7 @@ const issueData = AsyncHandler((req, res) => __awaiter(void 0, void 0, void 0, f
         throw new ApiError(400, "invalid data");
     const findDataIssuer = yield getWalletAndPrivateKey(testData.issuer);
     const findDataReciver = yield getWalletAndPrivateKey(testData.receiver);
-    const updateData = Object.assign(Object.assign({}, testData), { issuer: findDataIssuer.walletId, privateKey: findDataIssuer.privateKey, receiver: findDataReciver.walletId });
+    const updateData = Object.assign(Object.assign({}, testData), { issuer: findDataIssuer === null || findDataIssuer === void 0 ? void 0 : findDataIssuer.walletId, privateKey: findDataIssuer === null || findDataIssuer === void 0 ? void 0 : findDataIssuer.privateKey, receiver: findDataReciver === null || findDataReciver === void 0 ? void 0 : findDataReciver.walletId });
     if (!updateData)
         throw new ApiError(404, "Invaild data");
     const saveDataonChain = yield BlockData(updateData);

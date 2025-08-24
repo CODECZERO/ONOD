@@ -30,32 +30,47 @@ const checkUser=async(email:string)=>{
     }
 }
 
-const getWalletAndPrivateKey = async (identifier: string) => {
- try {
-   // Check if identifier is email (contains @) or uniqueID
-   const isEmail = identifier.includes('@');
-   
-   const query = isEmail 
-     ? { email: identifier }
-     : { uniqueID: identifier };
-   
-   const vendor = await Vendeor.findOne(query).lean<IVendor>();
-   
-   if (!vendor) {
-     throw new ApiError(404, "Vendor not found");
-   }
+// Define a common interface for the documents we're querying
+interface IWalletHolder extends Document {
+  uniqueID: string;
+  privateKey: string;
+  walletId: string;
+  email: string;
+}
 
-   return {
-     uniqueID: vendor.uniqueID,
-     privateKey: vendor.privateKey,
-     walletId: vendor.walletId
-   };
- } catch (error) {
-   if (error instanceof ApiError) {
-     throw error;
-   }
-   throw new ApiError(500, "Database error: " + (error as Error).message);
- }
+/**
+ * Finds the wallet and private key associated with a given email address.
+ * It searches both the Vendor and User collections.
+ *
+ * @param {string} email The email of the entity to find.
+ * @returns {Promise<{uniqueID: string, privateKey: string, walletId: string} | null>}
+ * The wallet details if found, otherwise null.
+ */
+const getWalletAndPrivateKey = async (email: string) => {
+  const query = { email: email };
+
+  // 1. Search for a vendor with the provided email
+  const vendor = await Vendeor.findOne(query).lean<IWalletHolder>();
+  if (vendor) {
+    return {
+      uniqueID: vendor.uniqueID,
+      privateKey: vendor.privateKey,
+      walletId:vendor.walletId,
+    };
+  }
+
+  // 2. If no vendor is found, search for a user
+  const user = await BirthRecord.findOne(query).lean<IWalletHolder>();
+  if (user) {
+    return {
+      uniqueID: user.uniqueID,
+      privateKey: user.privateKey,
+      walletId:user.walletId,
+    };
+  }
+
+  // 3. If neither is found, return null
+  return null;
 };
 
 
