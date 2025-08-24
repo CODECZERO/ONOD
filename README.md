@@ -65,6 +65,16 @@ Built as a **prototype/MVP** for hackathons, ONOD demonstrates how **blockchain 
 
 ---
 
+## Team Contacts
+
+| Name             | Role             | Email                  | 
+|-----------------|-----------------|-----------------------|
+| Narendra Kadam   | Developer    | nrk19059@gmail.com    | 
+| Harish Jagdale   | Developer        | harishjagdale168@gmail.com   | 
+| Ankit Mahar      | Developer         | ashm57981@gmail.com   | 
+
+---
+
 ## Installation & Run (Local Prototype)
 
 1. **Clone the repository**
@@ -122,13 +132,5 @@ Hackathon Highlights:
 License
 MIT License 
  ---
-
-## Team Contacts
-
-| Name             | Role             | Email                  | 
-|-----------------|-----------------|-----------------------|
-| Narendra Kadam   | Developer    | nrk19059@gmail.com    | 
-| Harish Jagdale   | Developer        | harishjagdale168@gmail.com   | 
-| Ankit Mahar      | Developer         | ashm57981@gmail.com   | 
 
 
