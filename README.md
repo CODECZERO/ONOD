@@ -46,15 +46,21 @@ Built as a **prototype/MVP** for hackathons, ONOD demonstrates how **blockchain 
 ---
 
 ## Screenshots / Demo
+<img width="1855" height="945" alt="Image" src="https://github.com/user-attachments/assets/57cbdc42-64ea-407b-80f3-6745c86d8460" />
 
 ### Registration Page
+<img width="1902" height="988" alt="Screenshot 2025-08-24 102943" src="https://github.com/user-attachments/assets/c83814bd-9655-4035-af6b-4318a7fd5935" />
 
 
 ### Citizen Dashboard
-![Dashboard](./screenshots/dashboard.png)
+<img width="1874" height="979" alt="Screenshot 2025-08-24 103141" src="https://github.com/user-attachments/assets/2d5dc5fe-135e-4fce-9ed4-be55aeaedd66" />
+
 
 ### Admin / Export View
-![Admin Dashboard](./screenshots/admin.png)
+<img width="1904" height="1004" alt="Screenshot 2025-08-24 103534" src="https://github.com/user-attachments/assets/308457ae-9877-4129-877f-39fd26e6ce39" />
+
+### Integrity Final 
+<img width="1863" height="985" alt="Screenshot 2025-08-24 103759" src="https://github.com/user-attachments/assets/201c8151-915a-47a4-b6c3-1a8a4f9b000e" />
 
 
 ---
