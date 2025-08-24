@@ -75,14 +75,12 @@ cd one-nation-one-document
 
 
 2. **Install backend dependencies**
-```bash
-cd backend
+cd backend 
 npm install
 
 
 3. **Install frontend dependencies**
-```bash
-cd ../frontend
+cd ./frontend
 pip install -r requirements.txt
 
 
@@ -101,7 +99,7 @@ streamlit run app.py
 
 ---
 
-**Usage**
+## **Usage**
 - Register a citizen profile with personal, government, education, and employment info.
 - Upload supporting documents (Aadhaar, PAN, certificates, etc.).
 - Generate a deterministic SHA256 proof hash and optionally anchor on Aptos.
@@ -110,7 +108,7 @@ streamlit run app.py
 - QR codes enable quick proof verification offline or online.
 
 
-**Hackathon Highlights**
+## **Hackathon Highlights**
 - Prototype MVP ready in < 24 hours
 - Secure, blockchain-backed digital identity demo.
 - Innovative QR + proof hash verification
@@ -120,9 +118,3 @@ streamlit run app.py
 **License**
 MIT License 
 
-**Acknowledgements**
-- Inspired by government digital identity initiatives
-- Built with Streamlit
-, Node.js
-, MongoDB
-, and Aptos
