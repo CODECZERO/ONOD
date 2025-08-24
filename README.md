@@ -67,3 +67,48 @@ Built as a **prototype/MVP** for hackathons, ONOD demonstrates how **blockchain 
 ```bash
 git clone https://github.com/your-username/one-nation-one-document.git
 cd one-nation-one-document
+2. **Install backend dependencies**
+cd backend
+npm install
+3. **Install frontend dependencies**
+cd ../frontend
+pip install -r requirements.txt
+4. **Run backend**
+node server.js
+5. **Run frontend**
+streamlit run app.py
+6. Open http://localhost:8501 to view the application.
+
+---
+
+**Usage**
+- Register a citizen profile with personal, government, education, and employment info.
+- Upload supporting documents (Aadhaar, PAN, certificates, etc.).
+- Generate a deterministic SHA256 proof hash and optionally anchor on Aptos.
+- Admins can view, verify, and export submissions.
+- Organizations can add verified updates.
+- QR codes enable quick proof verification offline or online.
+
+**Team ONOD – Hackathon Participants**
+| Name           | Role                   | Contact                                                       |
+| -------------- | ---------------------- | ------------------------------------------------------------- |
+| Harish Jagdale | Full-stack Developer   | [harish.email@example.com](mailto:harish.email@example.com)   |
+| Member 2       | Blockchain Developer   | [member2.email@example.com](mailto:member2.email@example.com) |
+| Member 3       | Frontend & UX Designer | [member3.email@example.com](mailto:member3.email@example.com) |
+
+Hackathon Highlights
+- Prototype MVP ready in < 24 hours
+- Secure, blockchain-backed digital identity demo
+- Innovative QR + proof hash verification
+- Easy integration for organizations and admins
+- Highly scalable architecture using NodeJS + MongoDB + Aptos
+
+License
+MIT License © 2025 Harish Jagdale
+
+Acknowledgements
+- Inspired by government digital identity initiatives
+- Built with Streamlit
+, Node.js
+, MongoDB
+, and Aptos
