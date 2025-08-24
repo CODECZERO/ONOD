@@ -38,29 +38,36 @@ const checkUser = (email) => __awaiter(void 0, void 0, void 0, function* () {
         throw new ApiError(500, "Database error: " + error.message);
     }
 });
-const getWalletAndPrivateKey = (identifier) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        // Check if identifier is email (contains @) or uniqueID
-        const isEmail = identifier.includes('@');
-        const query = isEmail
-            ? { email: identifier }
-            : { uniqueID: identifier };
-        const vendor = yield Vendeor.findOne(query).lean();
-        if (!vendor) {
-            throw new ApiError(404, "Vendor not found");
-        }
+/**
+ * Finds the wallet and private key associated with a given email address.
+ * It searches both the Vendor and User collections.
+ *
+ * @param {string} email The email of the entity to find.
+ * @returns {Promise<{uniqueID: string, privateKey: string, walletId: string} | null>}
+ * The wallet details if found, otherwise null.
+ */
+const getWalletAndPrivateKey = (email) => __awaiter(void 0, void 0, void 0, function* () {
+    const query = { email: email };
+    // 1. Search for a vendor with the provided email
+    const vendor = yield Vendeor.findOne(query).lean();
+    if (vendor) {
         return {
             uniqueID: vendor.uniqueID,
             privateKey: vendor.privateKey,
-            walletId: vendor.walletId
+            walletId: vendor.walletId,
         };
     }
-    catch (error) {
-        if (error instanceof ApiError) {
-            throw error;
-        }
-        throw new ApiError(500, "Database error: " + error.message);
+    // 2. If no vendor is found, search for a user
+    const user = yield BirthRecord.findOne(query).lean();
+    if (user) {
+        return {
+            uniqueID: user.uniqueID,
+            privateKey: user.privateKey,
+            walletId: user.walletId,
+        };
     }
+    // 3. If neither is found, return null
+    return null;
 });
 const storeTransactionId = (identifier, transactionId) => __awaiter(void 0, void 0, void 0, function* () {
     try {

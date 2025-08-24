@@ -11,15 +11,18 @@ const venSchema = new mongoose.Schema({
     transId: [
         {
             type: String,
-        }
+        },
     ],
+    walletId: {
+        type: String,
+    },
     password: {
         type: String,
         require: true,
     },
     privateKey: {
         type: String,
-        require: true
+        require: true,
     },
     orgName: {
         type: String,
