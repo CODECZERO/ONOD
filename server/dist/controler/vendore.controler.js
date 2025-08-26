@@ -37,28 +37,48 @@ const saveData = AsyncHandler((req, res) => __awaiter(void 0, void 0, void 0, fu
 }));
 const BlockData = (data) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // Construct the payload for the Move function
-        const payload = {
-            function: "0x6b7bf296ecb04c37b5ac861ef63ca74cca1dda1694778fb29677c56de5202995::storeModule::store_document",
+        // Try to store document directly (if store exists)
+        const storePayload = {
+            function: "0xa0d9331d0634419f53581c11c9d8ff6c8c57457f57d7911df07eb9b57afebe7a::storeModule::store_document",
             typeArguments: [],
             functionArguments: [
-                data.receiver, // address string (0x...)
-                data.docType, // string
-                data.docId, // string
-                JSON.stringify(data.metaData), // string
-                data.chain, // vector<string>
-                Math.floor(new Date().getTime() / 1000),
+                data.receiver,
+                data.docType,
+                data.docId,
+                JSON.stringify(data.metaData),
+                data.chain,
+                Math.floor(new Date().getTime() / 1000).toString(),
             ],
         };
-        // Submit transaction
-        const submitData = yield submitTnx(data, payload);
-        return submitData;
+        try {
+            const submitData = yield submitTnx(data, storePayload);
+            return submitData;
+        }
+        catch (error) {
+            // If it fails with MutBorrowGlobal, try init_store first
+            if (error.message.includes('MutBorrowGlobal')) {
+                const initPayload = {
+                    function: "0xa0d9331d0634419f53581c11c9d8ff6c8c57457f57d7911df07eb9b57afebe7a::storeModule::init_store",
+                    typeArguments: [],
+                    functionArguments: [],
+                };
+                yield submitTnx(data, initPayload);
+                return yield submitTnx(data, storePayload);
+            }
+            throw error;
+        }
     }
     catch (error) {
         console.error("Error in BlockData:", error);
         return error;
     }
 });
+const storeOtherFu = AsyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const data = req.body;
+    console.log(data);
+    const datasaver = BlockData(data);
+    return res.status(200).json(new ApiResponse(200, datasaver, "datasave"));
+}));
 const login = AsyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body; // Use 'password' to match the frontend payload
     // Step 1: Check for missing credentials from the request body
@@ -85,7 +105,9 @@ const issueData = AsyncHandler((req, res) => __awaiter(void 0, void 0, void 0, f
     if (!testData)
         throw new ApiError(400, "invalid data");
     const findDataIssuer = yield getWalletAndPrivateKey(testData.issuer);
-    const findDataReciver = yield getWalletAndPrivateKey(testData.receiver);
+    const createAcoount = yield createWalletId();
+    //create code wallet here and then store it
+    const findDataReciver = yield getWalletAndPrivateKey(createAcoount.accountAddress);
     const updateData = Object.assign(Object.assign({}, testData), { issuer: findDataIssuer === null || findDataIssuer === void 0 ? void 0 : findDataIssuer.walletId, privateKey: findDataIssuer === null || findDataIssuer === void 0 ? void 0 : findDataIssuer.privateKey, receiver: findDataReciver === null || findDataReciver === void 0 ? void 0 : findDataReciver.walletId });
     if (!updateData)
         throw new ApiError(404, "Invaild data");
@@ -100,4 +122,4 @@ const readTra = AsyncHandler((req, res) => __awaiter(void 0, void 0, void 0, fun
     const read = yield readTransaction(transId);
     return res.status(200).json(new ApiResponse(200, read));
 }));
-export { saveData, login, createWalletId, issueData, readTra, BlockData };
+export { saveData, login, createWalletId, issueData, readTra, BlockData, storeOtherFu };

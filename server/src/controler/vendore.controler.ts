@@ -11,9 +11,7 @@ import {
   PrivateKey,
   PublicKey,
 } from "@aptos-labs/ts-sdk";
-import { configDotenv } from "dotenv";
 import { AptosConnect, readTransaction, submitTnx } from "../db/aptos.config.js";
-import Vendeor from "../model/vendor.model.js";
 
 const client = AptosConnect();
 interface IVendor {
@@ -37,7 +35,7 @@ interface IVendor {
 
 interface BlockDataTS {
   issuer: string;
-  privateKey: string;
+  privateKey?: string;
   receiver: string;
   docType: string;
   docId: string;
@@ -75,31 +73,49 @@ const saveData = AsyncHandler(async (req: Request, res: Response) => {
 
 const BlockData = async (data: BlockDataTS) => {
   try {
-    // Construct the payload for the Move function
-    const payload: InputGenerateTransactionPayloadData = {
-      function:
-        "0x6b7bf296ecb04c37b5ac861ef63ca74cca1dda1694778fb29677c56de5202995::storeModule::store_document",
+    // Try to store document directly (if store exists)
+    const storePayload: InputGenerateTransactionPayloadData = {
+      function: "0xa0d9331d0634419f53581c11c9d8ff6c8c57457f57d7911df07eb9b57afebe7a::storeModule::store_document",
       typeArguments: [],
       functionArguments: [
-        data.receiver, // address string (0x...)
-        data.docType, // string
-        data.docId, // string
-        JSON.stringify(data.metaData), // string
-        data.chain, // vector<string>
-        Math.floor(new Date().getTime() / 1000),
+        data.receiver,
+        data.docType,
+        data.docId,
+        JSON.stringify(data.metaData),
+        data.chain,
+        Math.floor(new Date().getTime() / 1000).toString(),
       ],
     };
-
-    // Submit transaction
-    const submitData = await submitTnx(data, payload);
-  
-    return submitData;
+    
+    try {
+      const submitData = await submitTnx(data, storePayload);
+      return submitData;
+    } catch (error) {
+      // If it fails with MutBorrowGlobal, try init_store first
+      if (error.message.includes('MutBorrowGlobal')) {
+        const initPayload = {
+          function: "0xa0d9331d0634419f53581c11c9d8ff6c8c57457f57d7911df07eb9b57afebe7a::storeModule::init_store",
+          typeArguments: [],
+          functionArguments: [],
+        };
+        await submitTnx(data, initPayload);
+        return await submitTnx(data, storePayload);
+      }
+      throw error;
+    }
+    
   } catch (error) {
     console.error("Error in BlockData:", error);
     return error;
   }
 };
 
+const storeOtherFu=AsyncHandler(async(req:Request,res:Response)=>{
+  const data:BlockDataTS=req.body;
+  console.log(data)
+  const datasaver=BlockData(data);
+  return res.status(200).json(new ApiResponse(200,datasaver,"datasave"));
+})
 const login = AsyncHandler(async (req, res) => {
   const { email, password } = req.body; // Use 'password' to match the frontend payload
   // Step 1: Check for missing credentials from the request body
@@ -131,7 +147,9 @@ const issueData = AsyncHandler(async (req: Request, res: Response) => {
   const testData: BlockDataTS = req.body;
   if (!testData) throw new ApiError(400, "invalid data");
   const findDataIssuer= await getWalletAndPrivateKey(testData.issuer);
-  const findDataReciver= await getWalletAndPrivateKey(testData.receiver);
+  const createAcoount=await createWalletId();
+  //create code wallet here and then store it
+  const findDataReciver= await getWalletAndPrivateKey(createAcoount.accountAddress);
   const updateData:BlockDataTS={
     ...testData,
     issuer:findDataIssuer?.walletId as string,
@@ -153,4 +171,4 @@ const readTra=AsyncHandler(async(req:Request,res:Response)=>{
 
 
 
-export { IVendor, BlockDataTS, saveData, login, createWalletId, issueData,readTra,BlockData };
+export { IVendor, BlockDataTS, saveData, login, createWalletId, issueData,readTra,BlockData,storeOtherFu };

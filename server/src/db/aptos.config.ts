@@ -6,7 +6,7 @@ import {
   Network,
   Ed25519PrivateKey,
 } from "@aptos-labs/ts-sdk";
-import { BlockDataTS } from "../controler/vendore.controler";
+import { BlockDataTS } from "../controler/vendore.controler.js";
 import { HexString } from "aptos";
 
 let client: Aptos | null = null;
@@ -14,7 +14,7 @@ let client: Aptos | null = null;
 const AptosConnect = async () => {
   //connect aptos blockchain
   try {
-    const connectionInstance = new AptosConfig({ network: Network.LOCAL });
+    const connectionInstance = new AptosConfig({ network: Network.DEVNET });
     client = new Aptos(connectionInstance);
     return client;
   } catch (error) {
@@ -78,15 +78,24 @@ const submitTnx = async (
     const privateKey = new Ed25519PrivateKey(key);
     const account = Account.fromPrivateKey({ privateKey });
 
+    console.log("Account address:", account.accountAddress.toString());
+    console.log("Payload:", JSON.stringify(payload, null, 2));
+
     // Build transaction
     const txn = await client.transaction.build.simple({
       sender: account.accountAddress,
       data: payload,
+      options: {
+        maxGasAmount: 200000,
+        gasUnitPrice: 100,
+      }
     });
 
     if (!txn) {
       throw new Error("Failed to build transaction");
     }
+
+    console.log("Transaction built successfully");
 
     // Sign and submit transaction
     const committedTxn = await client.signAndSubmitTransaction({
@@ -100,21 +109,54 @@ const submitTnx = async (
 
     console.log("Transaction submitted:", committedTxn.hash);
 
-    // Wait for transaction confirmation
+    // Wait for transaction confirmation with success check
     const executedTxn = await client.waitForTransaction({
       transactionHash: committedTxn.hash,
+      options: {
+        timeoutSecs: 30,
+        checkSuccess: true,  // This will throw if transaction fails
+      }
     });
 
     if (!executedTxn) {
       throw new Error("Transaction execution failed - transaction not found");
     }
 
-    console.log("Transaction executed successfully:", executedTxn);
+    // Double check success (redundant with checkSuccess: true, but good practice)
+    if (!executedTxn.success) {
+      console.error("Transaction failed with VM status:", executedTxn.vm_status);
+      console.error("Full transaction:", JSON.stringify(executedTxn, null, 2));
+      throw new Error(`Transaction execution failed: ${executedTxn.vm_status}`);
+    }
+
+    console.log("Transaction executed successfully:", executedTxn.hash);
+    console.log("Gas used:", executedTxn.gas_used);
     
     return committedTxn.hash;
-    
+
   } catch (error) {
     console.error("Transaction failed:", error);
+    
+    // Enhanced error logging for debugging
+    if (error instanceof Error) {
+      console.error("Error message:", error.message);
+      
+      // Check if it's an Aptos transaction error with additional details
+      if ('transaction' in error) {
+        const txnError = error as any;
+        if (txnError.transaction) {
+          console.error("Failed transaction details:");
+          console.error("- VM Status:", txnError.transaction.vm_status);
+          console.error("- Gas used:", txnError.transaction.gas_used);
+          console.error("- Success:", txnError.transaction.success);
+          
+          // Log the payload that failed
+          if (txnError.transaction.payload) {
+            console.error("- Failed payload:", JSON.stringify(txnError.transaction.payload, null, 2));
+          }
+        }
+      }
+    }
     
     // Re-throw the error so callers can handle it appropriately
     if (error instanceof Error) {
@@ -124,7 +166,6 @@ const submitTnx = async (
     }
   }
 };
-
 const readTransaction = async (transactionId: string) => {
   try {
     const transaction = await client?.getTransactionByHash({
