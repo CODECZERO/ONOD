@@ -1,5 +1,5 @@
-import { config } from "dotenv";
-config();
+import dotenv from "dotenv";
+dotenv.config();
 
 import app from "./app.js";
 import connectAll from "./util/appStarup.util.js";

@@ -15,5 +15,4 @@ app.use("/api/v1/vendore", Vendeor);
 app.use("api/v1/user", User);
 app.set("trust proxy", 1);
 app.use(express.static("public"));
-app.use("/api/v1/vendore", Vendeor);
 export default app;

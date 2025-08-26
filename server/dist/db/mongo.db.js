@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import mongoose from 'mongoose';
 const connectDb = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const connectionInstance = yield mongoose.connect(`${process.env.MONGODB_URL}`);
+        const connectionInstance = yield mongoose.connect(`${process.env.MONGO_URL}`);
         return connectionInstance;
     }
     catch (error) {
